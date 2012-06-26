@@ -10,17 +10,10 @@ if [ $? -ne 0 ]
         exit
 fi
 
-r=`wget -q http://downloads.sourceforge.net/project/zpanelcp/releases/10.0.0/zpanelx-1_0_0.zip`
-if [ $? -ne 0 ]
-  then
-        echo -e "The ZPanel source package is unreachable please report to the ZPanel Team!\n"
-        exit
-fi
-
 tz=``
 echo -e "Find your timezone from : http://php.net/manual/en/timezones.php e.g Europe/London"
 echo -e ""
-read -e -p "Enter Your Time Zone" tz
+read -e -p "Enter Your Time Zone: " tz
 
 echo $tz
 
@@ -89,7 +82,13 @@ service iptables save
 service iptables stop
 chkconfig iptables off
 
-echo -e "## Adding PROFTPD REPO ##"
+echo -e ""
+echo -e "###########################"
+echo -e "## Adding PROFTPD REPO   ##"
+echo -e "## This can take a while ##"
+echo -e "###########################"
+echo -e ""
+
 ###################################
 # PROFTPD REPO                    #
 # THIS URL CAN BECOME OUT OF DATE #
@@ -103,7 +102,7 @@ yum -y remove sendmail vsftpd
 echo -e "## Running System Update ##";
 yum -y update
 echo -e "## Installing vim make zip unzip ld-linux.so.2 libbz2.so.1 libdb-4.7.so libgd.so.2 ##"
-yum -y install sudo wget vim make zip unzip ld-linux.so.2 libbz2.so.1 libdb-4.7.so libgd.so.2
+yum -y install sudo wget vim make zip unzip git ld-linux.so.2 libbz2.so.1 libdb-4.7.so libgd.so.2
 echo -e "## Installing httpd php php-suhosin php-devel php-gd php-mbstring php-mcrypt php-intl php-imap php-mysql php-xml php-xmlrpc curl curl-devel perl-libwww-perl libxml2 libxml2-devel mysql-server zip webalizer gcc gcc-c++ httpd-devel at make mysql-devel bzip2-devel ##"
 yum -y -q install httpd php php-suhosin php-devel php-gd php-mbstring php-mcrypt php-intl php-imap php-mysql php-xml php-xmlrpc curl curl-devel perl-libwww-perl libxml2 libxml2-devel mysql-server zip webalizer gcc gcc-c++ httpd-devel at make mysql-devel bzip2-devel
 echo -e "## Installing postfix dovecot dovecot-mysql ##"
@@ -113,19 +112,17 @@ yum -y install proftpd proftpd-mysql
 echo -e "## Installing bind bind-utils bind-libs ##"
 yum -y install bind bind-utils bind-libs
 
-echo -e "## DOWNLOADING ZPANELX SOURCE ##"
-cd /root
-wget http://downloads.sourceforge.net/project/zpanelcp/releases/10.0.0/zpanelx-1_0_0.zip
-echo -e "## UNZIP SOURCE TO SERVER ##"
-unzip zpanelx-1_0_0.zip
-echo -e "## REMOVING ZIP FILE ##"
-rm -rf zpanelx-1_0_0*
-cd zpanelx
+git clone https://github.com/bobsta63/zpanelx.git
+cd zpanelx/
+git checkout 10.0.0
+mkdir ../zpanelexport/
+git checkout-index -a -f --prefix=/root/zpanelexport/
+cd ../zpanelexport/
 
 ######################
 # INSTALL THE PANEL! #
 ######################
-echo -e "## INSTALL THE PANEL! ##"
+echo -e "## INSTALLING THE PANEL... ##"
 cd etc/build/
 chmod +x prepare.sh
 ./prepare.sh
