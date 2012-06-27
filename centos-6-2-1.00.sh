@@ -1,5 +1,7 @@
 #!/bin/bash
 
+yum -y install wget chkconfig
+
 r=`wget -q http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-7.noarch.rpm`
 if [ $? -ne 0 ]
   then
@@ -116,7 +118,7 @@ git clone https://github.com/bobsta63/zpanelx.git
 cd zpanelx/
 git checkout 10.0.0
 mkdir ../zpanelexport/
-git checkout-index -a -f --prefix=/root/zpanelexport/
+git checkout-index -a -f --prefix=../zpanelexport/
 cd ../zpanelexport/
 
 ######################
@@ -194,9 +196,7 @@ sed -i 's|DocumentRoot "/var/www/html"|DocumentRoot "/etc/zpanel/panel"|' /etc/h
 /etc/zpanel/panel/bin/setso --set zpanel_domain $fqdn
 /etc/zpanel/panel/bin/setso --set server_ip $pubip
 
-#vi /etc/php.ini
-#uncomment ;date.timezone =
-#change to date.timezone = Europe/London
+# Set PHP Time Zone
 sed -i "s|;date.timezone =|date.timezone = $tz|" /etc/php.ini
 #upload directory
 sed -i "s|;upload_tmp_dir =|upload_tmp_dir = /var/zpanel/temp/|" /etc/php.ini
