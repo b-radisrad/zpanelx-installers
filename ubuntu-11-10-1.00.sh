@@ -42,7 +42,7 @@ echo "=========================="
 echo -e "\n"
 sleep 2
 apt-get update
-apt-get -y install unzip
+apt-get -y install git
 echo -e "\n"
 echo "Done."
 
@@ -84,22 +84,27 @@ echo ""
 clear
 
 echo ""
-echo "======================================================================="
-echo "Downloading and Extracting ZPX From SF to Temp Directory at /opt/zpanel"
-echo "======================================================================="
+echo "==========================================================================="
+echo "Downloading and Extracting ZPX From GitHub to Temp Directory at /opt/zpanel"
+echo "==========================================================================="
 echo ""
 sleep 2
 mkdir /opt/zpanel/
-cd /opt/zpanel ; wget http://sourceforge.net/projects/zpanelcp/files/releases/10.0.0/zpanelx-1_0_0.zip/download
-cd /opt/zpanel ; unzip *
-echo ""
+cd /opt/zpanel
+
+git clone https://github.com/bobsta63/zpanelx.git
+cd zpanelx/
+git checkout 10.0.0
+mkdir ../zpanelexport/
+git checkout-index -a -f --prefix=../zpanelexport/
+cd ../zpanelexport/
+
 echo "Done..."
 
 echo ""
 echo "===================================="
 echo "Copying ZpanelX files to /etc/zpanel"
 echo "===================================="
-cd /opt/zpanel
 cp -fr * /etc/zpanel/panel
 chmod -R 777 /etc/zpanel/
 chmod -R 777 /var/zpanel/
