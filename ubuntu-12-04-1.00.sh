@@ -87,11 +87,18 @@ echo "Done." >/dev/tty
 
 
 
-echo -n "Downloading / Extracting ZPX From SF to Temp Directory at /opt/zpanel: " >/dev/tty
+echo -n "Downloading / Extracting ZPX From github to Temp Directory at /opt/zpanel: " >/dev/tty
 
-echo "wget -q -O /opt/ZPX.zip http://sourceforge.net/projects/zpanelcp/files/releases/10.0.0/zpanelx-1_0_0.zip/download"
-wget -q -O /opt/ZPX.zip http://sourceforge.net/projects/zpanelcp/files/releases/10.0.0/zpanelx-1_0_0.zip/download
-unzip /opt/ZPX.zip -d /opt/zpanel
+mkdir -p /opt/zpanel/
+
+cd /opt/zpanel/
+
+git clone https://github.com/bobsta63/zpanelx.git
+cd zpanelx/
+git checkout 10.0.0
+mkdir ../zpanelexport/
+git checkout-index -a -f --prefix=../zpanelexport/
+cd ../zpanelexport/
 
 echo "Done." >/dev/tty
 
@@ -99,7 +106,7 @@ echo "Done." >/dev/tty
 
 echo -n "Copying ZpanelX files to /etc/zpanel: " >/dev/tty
 
-cp -fr /opt/zpanel/* /etc/zpanel/panel
+cp -fr * /etc/zpanel/panel
 ## why are we setting to 777 ???
 chmod -R 777 /etc/zpanel/
 chmod -R 777 /var/zpanel/
