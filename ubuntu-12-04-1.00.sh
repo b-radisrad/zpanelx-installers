@@ -60,7 +60,7 @@ exec &>$INSTALLLOG
 echo -ne "\nUpdating Aptitude Repos: " >/dev/tty
 
 apt-get update 
-apt-get -y install unzip debconf-utils 
+apt-get -y install git unzip debconf-utils 
 
 echo "Done." >/dev/tty
 
@@ -446,3 +446,7 @@ echo "=                By Xengulai (xengulai@xengulai.com)                ="
 echo "=...................................................................="
 echo ""
 echo ""
+echo -e "#############################"
+echo -e "# REBOOTING THE SERVER NOW! #"
+echo -e "#############################"
+shutdown -r now
