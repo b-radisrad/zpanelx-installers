@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#################################################################
+# ZPanelX Automated Installer for CentOS 6.2                    #
+# Created by : nickelj                                          #
+# Current maintainer : Kevin Andrews (kandrews@zpanelcp.com)    #
+# Licensed Under the GPL (http://www.gnu.org/licenses/gpl.html) #
+# Version 1.0.0                                                 #
+#################################################################
+
 yum -y install wget chkconfig
 
 r=`wget -q http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-7.noarch.rpm`

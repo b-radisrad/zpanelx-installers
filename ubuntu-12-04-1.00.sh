@@ -1,5 +1,13 @@
 #!/bin/bash
 
+#################################################################
+# ZPanelX Automated Installer for Ubuntu 12.04                  #
+# Created by : Xengulai (xengulai@xengulai.com)                 #
+# Current maintainer : Kevin Andrews (kandrews@zpanelcp.com)    #
+# Licensed Under the GPL (http://www.gnu.org/licenses/gpl.html) #
+# Version 1.0.0                                                 #
+#################################################################
+
 clear
 
 ## set install log path to home dir

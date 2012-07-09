@@ -1,8 +1,14 @@
 #!/bin/bash
 
-###
-###     Auto Installer for ZPX Ubuntu 10.04 LTS
-###
+################################################################################
+#                                                                              #
+# ZPanelX Automated Installer for Ubuntu 11.10                                 #
+# Created by Mudasir Mirza                                                     #
+# Current maintainer : Kevin Andrews (kandrews@zpanelcp.com)                   #
+# Licensed Under the GPL (http://www.gnu.org/licenses/gpl.html)                #
+# Version 1.0.0                                                                #
+#                                                                              #
+################################################################################
 
 clear
 echo ""

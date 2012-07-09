@@ -1,0 +1,122 @@
+Tested on CentOS
+Gives bandwidth information on IMAP email accounts.
+POP3 monitoring needs testing
+Ubuntu compatibility needs testing
+
+yum install rsyslog-mysql
+
+vi /etc/rsyslog.conf
+
+#load mysql lib
+$ModLoad ommysql.so 
+
+#log all messages containing IMAP to mysql
+:msg,contains,"IMAP" :ommysql:localhost,Syslog,root,pass
+
+vi /etc/zpanel/configs/dovecot2/dovecot.conf 
+
+#add additional loggin options
+mail_log_prefix = "%Us(%u), rip=%r, lip=%l: "
+imap_logout_format = bytes=%i/%o
+
+MySQL schema creation statement:
+
+CREATE DATABASE Syslog;
+USE Syslog;
+CREATE TABLE SystemEvents
+(
+        ID int unsigned not null auto_increment primary key,
+        CustomerID bigint,
+        ReceivedAt datetime NULL,
+        DeviceReportedTime datetime NULL,
+        Facility smallint NULL,
+        Priority smallint NULL,
+        FromHost varchar(60) NULL,
+        Message text,
+        NTSeverity int NULL,
+        Importance int NULL,
+        EventSource varchar(60),
+        EventUser varchar(60) NULL,
+        EventCategory int NULL,
+        EventID int NULL,
+        EventBinaryData text NULL,
+        MaxAvailable int NULL,
+        CurrUsage int NULL,
+        MinUsage int NULL,
+        MaxUsage int NULL,
+        InfoUnitID int NULL ,
+        SysLogTag varchar(60),
+        EventLogType varchar(60),
+        GenericFileName VarChar(60),
+        SystemID int NULL
+);
+
+CREATE TABLE SystemEventsProperties
+(
+        ID int unsigned not null auto_increment primary key,
+        SystemEventID int NULL ,
+        ParamName varchar(255) NULL ,
+        ParamValue text NULL
+);
+
+
+MySQL Stored routine for spliting strings:
+
+CREATE FUNCTION SPLIT_STR(
+  x VARCHAR(255),
+  delim VARCHAR(12),
+  pos INT
+)
+RETURNS VARCHAR(255)
+RETURN REPLACE(SUBSTRING(SUBSTRING_INDEX(x, delim, pos),
+       LENGTH(SUBSTRING_INDEX(x, delim, pos -1)) + 1),
+       delim, '');
+
+
+New table structure for storing usages:
+
+CREATE TABLE `imap_usage` (
+  `imap_usage_email` varchar(255) NOT NULL,
+  `imap_usage_in` int(11) DEFAULT NULL,
+  `imap_usage_out` int(11) DEFAULT NULL,
+  `imap_usage_total` int(11) DEFAULT NULL,
+  PRIMARY KEY (`imap_usage_email`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1$$
+
+
+
+
+
+MySQL Trigger to add Messages to new table:
+
+-- Trigger DDL Statements
+DELIMITER $$
+
+USE `Syslog`$$
+
+CREATE
+DEFINER=`root`@`localhost`
+TRIGGER `Syslog`.`trigger_imap_usage`
+AFTER INSERT ON `Syslog`.`SystemEvents`
+FOR EACH ROW
+BEGIN
+INSERT INTO imap_usage 
+    (
+        imap_usage_email, 
+        imap_usage_in, 
+        imap_usage_out, 
+        imap_usage_total
+    ) 
+        VALUES 
+    (
+        SPLIT_STR((SPLIT_STR(NEW.Message, 'IMAP(', 2)), ')', 1),
+        SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 1),
+        SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 2),
+        SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 1)+SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 2)
+    )
+    ON DUPLICATE KEY UPDATE 
+    imap_usage_in = imap_usage_in+SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 1),
+    imap_usage_out = imap_usage_out+SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 2),
+    imap_usage_total = imap_usage_total+(SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 1)+SPLIT_STR((SPLIT_STR(NEW.Message, 'bytes=', 2)), '/', 2))
+    ;
+END$$
