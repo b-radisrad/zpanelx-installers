@@ -149,11 +149,24 @@ echo "Done." >/dev/tty
 
 echo -n "Installing main packages: " >/dev/tty
 
-
-## preload mysql variables to suppress prompts
+###################    
+# CONFIGURE MYSQL #
+###################
 echo mysql-server-5.1 mysql-server/root_password password $MYSQL_PASS | debconf-set-selections
 echo mysql-server-5.1 mysql-server/root_password_again password $MYSQL_PASS | debconf-set-selections
 apt-get -y install mysql-server mysql-server apache2 libapache2-mod-php5 libapache2-mod-bw php5-common php5-suhosin php5-cli php5-mysql php5-gd php5-mcrypt php5-curl php-pear php5-imap php5-xmlrpc php5-xsl db4.7-util zip webalizer build-essential 
+
+mysql -u root -p$MYSQL_PASS -e "DROP DATABASE test";
+read -p "Remove access to root MySQL user from remote connections? (Recommended) Y/n " -n 1 -r
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+mysql -u root -p$MYSQL_PASS -e "DELETE FROM mysql.user WHERE User='root' AND Host!='localhost'";
+echo "Remote access to the root MySQL user has been removed"
+else
+echo "Remote access to the root MySQL user is still available, we hope you selected a very strong password"
+fi
+mysql -u root -p$MYSQL_PASS -e "DELETE FROM mysql.user WHERE User=''";
+mysql -u root -p$MYSQL_PASS -e "FLUSH PRIVILEGES";
 
 echo "Done." >/dev/tty
 
