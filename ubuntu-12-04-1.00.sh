@@ -203,9 +203,11 @@ cd ..
 ## preload postfix variables to suppress prompts
 echo postfix postfix/mailname string $SERVER_NAME | debconf-set-selections
 echo postfix postfix/main_mailer_type select Internet Site | debconf-set-selections
+## fixes errors when running the dpkg lines below
+apt-get -yf install
 ## install patched postfix redundant for i386/amd64..
-dpkg -i postfix_2.9.1-4_amd64.deb postfix-mysql_2.9.1-4_amd64.deb
-dpkg -i postfix_2.9.1-4_i386.deb postfix-mysql_2.9.1-4_i386.deb
+dpkg -i postfix_*_amd64.deb postfix-mysql_*_amd64.deb
+dpkg -i postfix_*_i386.deb postfix-mysql_*_i386.deb
 
 apt-get -y install dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common libsasl2-modules-sql libsasl2-modules 
 ## (old way, not compatible with 12.04) ## apt-get -y install postfix postfix-mysql dovecot-mysql dovecot-imapd dovecot-pop3d dovecot-common libsasl2-modules-sql libsasl2-modules 
