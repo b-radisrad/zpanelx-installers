@@ -67,6 +67,17 @@ exec &>$INSTALLLOG
 
 echo -ne "\nUpdating Aptitude Repos: " >/dev/tty
 
+if grep -Fxq "deb-src" /etc/apt/sources.list
+then
+    echo "sources list up-to-date"
+else
+    echo "deb-src http://archive.ubuntu.com/ubuntu precise main" >> /etc/apt/sources.list
+    echo "deb-src http://archive.ubuntu.com/ubuntu precise-updates main" >> /etc/apt/sources.list
+    echo "deb-src http://security.ubuntu.com/ubuntu precise-security main" >> /etc/apt/sources.list
+    echo "deb-src http://archive.ubuntu.com/ubuntu precise universe" >> /etc/apt/sources.list
+    echo "deb-src http://archive.ubuntu.com/ubuntu precise-updates universe" >> /etc/apt/sources.list
+fi
+
 apt-get update 
 apt-get -y install git unzip debconf-utils 
 
