@@ -124,6 +124,9 @@ yum -y install bind bind-utils bind-libs
 
 git clone https://github.com/bobsta63/zpanelx.git
 cd zpanelx/
+######################################
+# PIPE git tag -l to a user question #
+######################################
 git checkout 10.0.0
 mkdir ../zpanelexport/
 git checkout-index -a -f --prefix=../zpanelexport/
@@ -249,7 +252,7 @@ mv /etc/postfix/main.cf /etc/postfix/main.old
 ln /etc/zpanel/configs/postfix/conf/main.cf /etc/postfix/main.cf
 mv /etc/dovecot/dovecot.conf /etc/dovecot/dovecot.old
 ln -s /etc/zpanel/configs/dovecot2/dovecot.conf /etc/dovecot/dovecot.conf
-
+sed -i '1ilisten = *' /etc/zpanel/configs/dovecot2/dovecot.conf
 sed -i "s|myhostname = control.yourdomain.com|myhostname = $fqdn|" /etc/zpanel/configs/postfix/conf/main.cf
 # This next line is not a typo - the original file has youromain.com
 sed -i "s|mydomain   = control.youromain.com|mydomain   = $fqdn|" /etc/zpanel/configs/postfix/conf/main.cf
